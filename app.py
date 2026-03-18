@@ -25,9 +25,8 @@ def cargar_pdfs(carpeta="pdfs"):
     return texto_total
 
 st.title("📚 Calculus 1 AI Assistant")
-st.caption("Ask questions about the course material.")
-st.markdown("---")
-st.caption("Developed by Roger Rivero | rriveropons93@gmail.com")
+#st.caption("Ask questions about the course material.")
+st.markdown("<small>Developed by Roger Riveropons | rriveropons93@gmail.com</small>", unsafe_allow_html=True)
 
 material = cargar_pdfs()
 
