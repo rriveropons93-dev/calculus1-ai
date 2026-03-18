@@ -3,16 +3,13 @@ from google import genai
 import pdfplumber
 import os
 
-from dotenv import load_dotenv
-
-try:
+if "GEMINI_API_KEY" in st.secrets:
     API_KEY = st.secrets["GEMINI_API_KEY"]
-except:
-    from dotenv import load_dotenv
-    load_dotenv()
+else:
     API_KEY = os.getenv("GEMINI_API_KEY")
 
-@st.cache_data
+client = genai.Client(api_key=API_KEY)
+
 def cargar_pdfs(carpeta="pdfs"):
     texto_total = ""
     archivos = [f for f in os.listdir(carpeta) if f.endswith(".pdf")]
