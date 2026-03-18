@@ -5,9 +5,12 @@ import os
 
 from dotenv import load_dotenv
 
-load_dotenv()
-API_KEY = os.getenv("GEMINI_API_KEY")
-client = genai.Client(api_key=API_KEY)
+try:
+    API_KEY = st.secrets["GEMINI_API_KEY"]
+except:
+    from dotenv import load_dotenv
+    load_dotenv()
+    API_KEY = os.getenv("GEMINI_API_KEY")
 
 @st.cache_data
 def cargar_pdfs(carpeta="pdfs"):
