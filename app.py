@@ -26,6 +26,8 @@ def cargar_pdfs(carpeta="pdfs"):
 
 st.title("📚 Calculus 1 AI Assistant")
 st.caption("Ask questions about the course material.")
+st.markdown("---")
+st.caption("Developed by Roger Rivero | rriveropons93@gmail.com")
 
 material = cargar_pdfs()
 
