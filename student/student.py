@@ -2,7 +2,7 @@ import streamlit as st
 from utils.pdf_utils import cargar_pdfs
 from utils.prompt import get_prompt
 
-def modo_estudiante(client, db):
+def modo_student(client, db):
     st.title("📚 Calculus 1 AI Assistant")
     st.markdown("<small>Developed by Roger Riveropons | rriveropons93@gmail.com</small>", unsafe_allow_html=True)
 
