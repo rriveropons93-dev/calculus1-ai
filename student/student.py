@@ -81,6 +81,8 @@ def modo_student(client, db):
             "mensajes": st.session_state.mensajes
         })
 
+        st.write(f"Debug: guardado para {student_id}")
+
         st.components.v1.html("""
         <script>
             setTimeout(function() {
