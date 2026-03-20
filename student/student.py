@@ -21,7 +21,11 @@ def modo_student(client, db):
                     doc = db.collection("usuarios").document(student_id).get()
                     if doc.exists and doc.to_dict().get("rol") == "student":
                         st.session_state.student_id = student_id
-                        st.session_state.mensajes = []
+                        doc = db.collection("chats").document(student_id).get()
+                        if doc.exists:
+                            st.session_state.mensajes = doc.to_dict().get("mensajes",[])
+                        else:
+                            st.session_state = []
                         st.rerun()
                     else:
                         st.error("Student ID not found.")
