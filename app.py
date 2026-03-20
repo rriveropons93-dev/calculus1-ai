@@ -1,6 +1,6 @@
 import streamlit as st
-from firebase_utils import init_firebase
-from gemini_utils import init_gemini
+from utils.firebase_utils import init_firebase
+from utils.gemini_utils import init_gemini
 from guest import modo_guest
 from professor import modo_profesor
 
