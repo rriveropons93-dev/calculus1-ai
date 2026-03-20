@@ -138,6 +138,10 @@ Background knowledge:
 
 PREGUNTA: {pregunta}"""
 
+# Anchor para scroll
+    anchor_id = f"msg-{len(st.session_state.mensajes)}"
+    st.markdown(f'<div id="{anchor_id}"></div>', unsafe_allow_html=True)
+
     with st.chat_message("assistant"):
         with st.spinner("Pensando..."):
             response = client.models.generate_content(
@@ -147,3 +151,10 @@ PREGUNTA: {pregunta}"""
             st.write(response.text)
 
     st.session_state.mensajes.append({"role": "assistant", "content": response.text})
+
+    # Scroll al inicio de la respuesta
+    st.components.v1.html(f"""
+    <script>
+        window.parent.document.getElementById('{anchor_id}').scrollIntoView({{behavior: 'smooth', block: 'start'}});
+    </script>
+    """, height=0)
