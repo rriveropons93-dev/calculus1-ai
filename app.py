@@ -153,6 +153,6 @@ PREGUNTA: {pregunta}"""
     <script>
         setTimeout(function() {
             window.parent.document.getElementById('top-response').scrollIntoView({behavior: 'smooth', block: 'start'});
-        }, 800);
+        }, 1200);
     </script>
     """, height=0)
