@@ -139,8 +139,7 @@ Background knowledge:
 PREGUNTA: {pregunta}"""
 
 # Anchor para scroll
-    anchor_id = f"msg-{len(st.session_state.mensajes)}"
-    st.markdown(f'<div id="{anchor_id}"></div>', unsafe_allow_html=True)
+st.markdown('<div id="top-response"></div>', unsafe_allow_html=True)
 
     with st.chat_message("assistant"):
         with st.spinner("Pensando..."):
@@ -152,10 +151,10 @@ PREGUNTA: {pregunta}"""
 
     st.session_state.mensajes.append({"role": "assistant", "content": response.text})
 
-st.components.v1.html(f"""
+    st.components.v1.html("""
     <script>
-        setTimeout(function() {{
-            window.parent.document.getElementById('{anchor_id}').scrollIntoView({{behavior: 'smooth', block: 'start'}});
-        }}, 800);
+        setTimeout(function() {
+            window.parent.document.getElementById('top-response').scrollIntoView({behavior: 'smooth', block: 'start'});
+        }, 800);
     </script>
     """, height=0)
