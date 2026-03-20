@@ -2,7 +2,7 @@ import streamlit as st
 from firebase_utils import init_firebase
 from gemini_utils import init_gemini
 from guest import modo_guest
-from professor import modo_professor
+from professor import modo_profesor
 
 db = init_firebase()
 client = init_gemini()
