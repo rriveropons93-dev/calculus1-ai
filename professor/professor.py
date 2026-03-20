@@ -1,21 +1,32 @@
 import streamlit as st
+from professor.professor_views import (
+    vista_lista_estudiantes,
+    vista_agregar_estudiante,
+    vista_estadisticas,
+    vista_detalle_estudiante
+)
 
 def modo_profesor(db):
     st.title("👨‍🏫 Professor Panel")
     st.markdown("---")
-    
-    col1, col2 = st.columns(2)
-    
-    with col1:
-        if st.button("← Back"):
-            st.session_state.modo = None
-            st.rerun()
-    
-    st.subheader("Students")
-    st.info("No students yet.")
-    
-    st.markdown("---")
-    
-    if st.button("➕ Add Student", use_container_width=True):
-        st.session_state.agregar_estudiante = True
+
+    if st.button("← Back"):
+        st.session_state.modo = None
+        st.session_state.prof_vista = "lista"
         st.rerun()
+
+    if "prof_vista" not in st.session_state:
+        st.session_state.prof_vista = "lista"
+
+    if st.session_state.prof_vista == "lista":
+        vista_lista_estudiantes(db)
+
+    elif st.session_state.prof_vista == "agregar":
+        vista_agregar_estudiante(db)
+
+    elif st.session_state.prof_vista == "estadisticas":
+        vista_estadisticas(db)
+
+    elif st.session_state.prof_vista == "detalle":
+        student_id = st.session_state.get("estudiante_seleccionado")
+        vista_detalle_estudiante(db, student_id)
