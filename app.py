@@ -3,6 +3,7 @@ from utils.firebase_utils import init_firebase
 from utils.gemini_utils import init_gemini
 from guest import modo_guest
 from professor.professor import modo_profesor
+from student.student import modo_student
 
 db = init_firebase()
 client = init_gemini()
@@ -33,7 +34,7 @@ elif st.session_state.modo == "guest":
     modo_guest(client)
 
 elif st.session_state.modo == "student":
-    st.title("🎓 Student mode - coming soon")
+    modo_student(client,db)
 
 elif st.session_state.modo == "professor":
     modo_profesor(db)
