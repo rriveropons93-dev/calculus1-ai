@@ -25,13 +25,12 @@ def cargar_pdfs(carpeta="pdfs"):
     return texto_total
 
 st.title("📚 Calculus 1 AI Assistant")
-#st.caption("Ask questions about the course material.")
 st.markdown("<small>Developed by Roger Riveropons | rriveropons93@gmail.com</small>", unsafe_allow_html=True)
 
 material = cargar_pdfs()
 
 if not material:
-    st.error("No material found in the pdfs folder.")    
+    st.error("No material found in the pdfs folder.")
     st.stop()
 
 st.success(f"Material loaded: {len(material)} characters")
@@ -71,7 +70,7 @@ Core behavior:
 
 Pedagogical behavior:
 - Act like a patient tutor for this course.
-- Adapt to the student’s level and request.
+- Adapt to the student's level and request.
 - If the student asks for a simpler explanation, use plain language and intuition.
 - If the student asks for step-by-step help, break the reasoning into small, explicit steps.
 - If the student asks for more rigor, increase mathematical precision.
@@ -138,8 +137,7 @@ Background knowledge:
 
 PREGUNTA: {pregunta}"""
 
-# Anchor para scroll
-st.markdown('<div id="top-response"></div>', unsafe_allow_html=True)
+    st.markdown('<div id="top-response"></div>', unsafe_allow_html=True)
 
     with st.chat_message("assistant"):
         with st.spinner("Pensando..."):
