@@ -138,7 +138,7 @@ Background knowledge:
 PREGUNTA: {pregunta}"""
 
     st.markdown('<div id="top-response"></div>', unsafe_allow_html=True)
-    st.markdown("<br><br><br>", unsafe_allow_html=True)
+    st.markdown("<br><br>", unsafe_allow_html=True)
 
     with st.chat_message("assistant"):
         with st.spinner("Pensando..."):
