@@ -152,9 +152,10 @@ PREGUNTA: {pregunta}"""
 
     st.session_state.mensajes.append({"role": "assistant", "content": response.text})
 
-    # Scroll al inicio de la respuesta
-    st.components.v1.html(f"""
+st.components.v1.html(f"""
     <script>
-        window.parent.document.getElementById('{anchor_id}').scrollIntoView({{behavior: 'smooth', block: 'start'}});
+        setTimeout(function() {{
+            window.parent.document.getElementById('{anchor_id}').scrollIntoView({{behavior: 'smooth', block: 'start'}});
+        }}, 800);
     </script>
     """, height=0)
