@@ -1,7 +1,6 @@
 import streamlit as st
-from google import genai
 from utils.pdf_utils import cargar_pdfs
-from prompt import get_prompt
+from utils.prompt import get_prompt
 
 def modo_guest(client):
     material = cargar_pdfs()
