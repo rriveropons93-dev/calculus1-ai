@@ -101,13 +101,58 @@ Analiza estas preguntas de estudiantes de la última semana:
 
 {texto}
 
-Respond in English with :
-1. Top 3-5 temas más consultados
-2. Dudas recurrentes principales
-3. Temas que recomiendas reforzar en clase
-4. Uso de la plataforma.
-Si hay algo que consideres importante a destacar.
-Sé conciso y directo."""
+Analyze the weekly student activity for this course and generate a concise instructor-facing weekly report.
+
+Important rules:
+- Start directly with the report. Do not write any introduction, greeting, or opening sentence.
+- Do not say things like "Here is the analysis" or "Based on the provided input."
+- Keep the report clear, brief, and practical.
+- Use short headings and bullet points.
+- Focus only on insights that are useful for the instructor.
+- Avoid filler, repetition, and generic commentary.
+- If the data is limited, state that briefly in one bullet only.
+- Do not overinterpret weak data.
+- Write the report in English.
+
+Use exactly this structure:
+
+## Resumen semanal del curso
+
+### Actividad general
+- Estudiantes activos:
+- Total de preguntas:
+- Nivel general de uso:
+
+### Temas más consultados
+- Tema 1
+- Tema 2
+- Tema 3
+
+### Dudas más recurrentes
+- Duda 1
+- Duda 2
+- Duda 3
+
+### Estudiantes con mayor actividad
+- Nombre o ID
+- Nombre o ID
+
+### Estudiantes con baja o nula actividad
+- Nombre o ID
+- Nombre o ID
+
+### Recomendaciones para el profesor
+- Recomendación 1
+- Recomendación 2
+
+### Observación sobre los datos
+- Una sola observación breve sobre la calidad o cantidad de datos, solo si es necesaria.
+
+Additional guidance:
+- If there is only one student or very little activity, keep the report short.
+- If there is not enough information for a section, write "Información insuficiente esta semana."
+- Prioritize actionable teaching insights over descriptive summaries."""
+
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
                     contents=prompt
@@ -170,6 +215,7 @@ Respond in English with :
 Sé conciso y útil para el profesor.
 Do not include any introduction or preamble.
 Start directly with the analysis."""
+
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
                     contents=prompt
