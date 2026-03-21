@@ -25,7 +25,7 @@ def modo_profesor(client,db):
         vista_agregar_estudiante(db)
 
     elif st.session_state.prof_vista == "estadisticas":
-        vista_estadisticas(client,db)
+        vista_estadisticas(db,client)
 
     elif st.session_state.prof_vista == "detalle":
         student_id = st.session_state.get("estudiante_seleccionado")
