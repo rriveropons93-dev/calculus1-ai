@@ -25,7 +25,7 @@ def modo_student(client, db):
                         if doc.exists:
                             st.session_state.mensajes = doc.to_dict().get("mensajes",[])
                         else:
-                            st.session_state = []
+                            st.session_state.mensajes = []
                         st.rerun()
                     else:
                         st.error("Student ID not found.")
