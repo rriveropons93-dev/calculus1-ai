@@ -1,6 +1,7 @@
 import streamlit as st
 from utils.pdf_utils import cargar_pdfs
 from utils.prompt import get_prompt
+from datetime import datetime
 
 def modo_student(client, db):
     st.title("📚 Calculus 1 AI Assistant")
@@ -78,7 +79,8 @@ def modo_student(client, db):
 
         # Guardar en Firebase
         db.collection("chats").document(student_id).set({
-            "mensajes": st.session_state.mensajes
+            "mensajes": st.session_state.mensajes,
+            "ultima_actualizacion": datetime.now().isoformat()
         })
 
         st.components.v1.html("""

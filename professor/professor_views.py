@@ -160,13 +160,15 @@ Analiza el siguiente historial de chat de un estudiante:
 
 {historial}
 
-Responde en español con:
+Respond in English with :
 1. Temas principales consultados
 2. Dudas recurrentes o confusiones
 3. Temas donde tuvo más dificultad
 4. Observación breve sobre el patrón de aprendizaje del estudiante
 
-Sé conciso y útil para el profesor."""
+Sé conciso y útil para el profesor.
+Do not include any introduction or preamble.
+Start directly with the analysis."""
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
                     contents=prompt
