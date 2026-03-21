@@ -101,11 +101,12 @@ Analiza estas preguntas de estudiantes de la última semana:
 
 {texto}
 
-Responde en español con:
+Respond in English with :
 1. Top 3-5 temas más consultados
 2. Dudas recurrentes principales
 3. Temas que recomiendas reforzar en clase
-
+4. Uso de la plataforma.
+Si hay algo que consideres importante a destacar.
 Sé conciso y directo."""
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
