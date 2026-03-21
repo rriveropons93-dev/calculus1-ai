@@ -38,11 +38,12 @@ def modo_student(client, db):
     student_id = st.session_state.student_id
     material = cargar_pdfs()
 
-    if st.button("← Back"):
-        st.session_state.modo = None
-        st.session_state.student_id = None
-        st.session_state.mensajes = []
-        st.rerun()
+    with st.sidebar:
+        if st.button("← Back",key="back_student_sidebar"):
+            st.session_state.modo = None
+            st.session_state.student_id = None
+            st.session_state.mensajes = []
+            st.rerun()
 
     st.success(f"Welcome, {student_id}!")
 
