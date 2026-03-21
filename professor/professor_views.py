@@ -1,8 +1,9 @@
 import streamlit as st
+from google.cloud.firestore_v1.base_query import FieldFilter
 
 def vista_lista_estudiantes(db):
     st.subheader("Students")
-    estudiantes = db.collection("usuarios").where("rol", "==", "student").stream()
+    estudiantes = db.collection("usuarios").where(filter = FieldFilter("rol", "==", "student")).stream()
     lista = list(estudiantes)
 
     if not lista:
