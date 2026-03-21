@@ -101,57 +101,26 @@ Analiza estas preguntas de estudiantes de la última semana:
 
 {texto}
 
-Analyze the weekly student activity for this course and generate a concise instructor-facing weekly report.
+Generate a very short weekly instructor report in English.
 
-Important rules:
-- Start directly with the report. Do not write any introduction, greeting, or opening sentence.
-- Do not say things like "Here is the analysis" or "Based on the provided input."
-- Keep the report clear, brief, and practical.
-- Use short headings and bullet points.
-- Focus only on insights that are useful for the instructor.
-- Avoid filler, repetition, and generic commentary.
-- If the data is limited, state that briefly in one bullet only.
-- Do not overinterpret weak data.
-- Write the report in English.
-
-Use exactly this structure:
-
-## Resumen semanal del curso
-
-### Actividad general
-- Estudiantes activos:
-- Total de preguntas:
-- Nivel general de uso:
-
-### Temas más consultados
-- Tema 1
-- Tema 2
-- Tema 3
-
-### Dudas más recurrentes
-- Duda 1
-- Duda 2
-- Duda 3
-
-### Estudiantes con mayor actividad
-- Nombre o ID
-- Nombre o ID
-
-### Estudiantes con baja o nula actividad
-- Nombre o ID
-- Nombre o ID
-
-### Recomendaciones para el profesor
-- Recomendación 1
-- Recomendación 2
-
-### Observación sobre los datos
-- Una sola observación breve sobre la calidad o cantidad de datos, solo si es necesaria.
-
-Additional guidance:
-- If there is only one student or very little activity, keep the report short.
-- If there is not enough information for a section, write "Información insuficiente esta semana."
-- Prioritize actionable teaching insights over descriptive summaries."""
+Rules:
+- Start directly with the report. No introduction.
+- Keep the report brief and easy to scan.
+- Use only the following sections:
+  1. Resumen semanal del curso
+  2. Temas más consultados
+  3. Dudas más recurrentes
+  4. Estudiantes con más actividad
+  5. Recomendación docente
+  6. Nota sobre los datos
+- Use short bullet points only.
+- Maximum 2 bullet points per section, except "Temas más consultados" which can have up to 3.
+- Do not explain too much.
+- Do not repeat information.
+- Do not add filler or generic commentary.
+- If data is limited, say so briefly.
+- Keep everything in English only.
+- Total length must stay compact, like a quick weekly dashboard, not a narrative report."""
 
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
