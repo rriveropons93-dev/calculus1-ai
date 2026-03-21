@@ -100,27 +100,30 @@ def vista_estadisticas(db, client):
 Analiza estas preguntas de estudiantes de la última semana:
 
 {texto}
-
 Generate a very short weekly instructor report in English.
 
 Rules:
-- Start directly with the report. No introduction.
-- Keep the report brief and easy to scan.
-- Use only the following sections:
-  1. Resumen semanal del curso
-  2. Temas más consultados
-  3. Dudas más recurrentes
-  4. Estudiantes con más actividad
-  5. Recomendación docente
-  6. Nota sobre los datos
-- Use short bullet points only.
-- Maximum 2 bullet points per section, except "Temas más consultados" which can have up to 3.
-- Do not explain too much.
-- Do not repeat information.
-- Do not add filler or generic commentary.
-- If data is limited, say so briefly.
-- Keep everything in English only.
-- Total length must stay compact, like a quick weekly dashboard, not a narrative report."""
+- No introduction.
+- No filler.
+- No unnecessary sections.
+- Maximum 70 words.
+- Use only these sections:
+
+## Resumen semanal
+**Actividad**
+- Estudiantes activos: X
+- Preguntas: X
+
+**Temas**
+- Tema 1
+- Tema 2
+
+**Dudas**
+- Duda 1
+- Duda 2
+
+**Recomendación**
+- Recomendación 1"""
 
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
