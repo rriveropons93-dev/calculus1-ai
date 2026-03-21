@@ -10,7 +10,7 @@ def modo_profesor(client,db):
     st.title("👨‍🏫 Professor Panel")
     st.markdown("---")
 
-    if st.button("← Back"):
+    if st.button("← Back",key = "back_main"):
         st.session_state.modo = None
         st.session_state.prof_vista = "lista"
         st.rerun()
