@@ -6,7 +6,7 @@ from professor.professor_views import (
     vista_detalle_estudiante
 )
 
-def modo_profesor(db):
+def modo_profesor(client,db):
     st.title("👨‍🏫 Professor Panel")
     st.markdown("---")
 
@@ -25,8 +25,8 @@ def modo_profesor(db):
         vista_agregar_estudiante(db)
 
     elif st.session_state.prof_vista == "estadisticas":
-        vista_estadisticas(db)
+        vista_estadisticas(client,db)
 
     elif st.session_state.prof_vista == "detalle":
         student_id = st.session_state.get("estudiante_seleccionado")
-        vista_detalle_estudiante(db, student_id)
+        vista_detalle_estudiante(db, student_id,client)
