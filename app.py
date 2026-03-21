@@ -37,4 +37,4 @@ elif st.session_state.modo == "student":
     modo_student(client,db)
 
 elif st.session_state.modo == "professor":
-    modo_profesor(db,client)
+    modo_profesor(client,db)
