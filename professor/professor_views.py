@@ -96,10 +96,11 @@ def vista_estadisticas(db, client):
         else:
             with st.spinner("Analyzing..."):
                 texto = "\n".join([f"- {m['content']}" for m in todas_las_preguntas])
-                prompt = f"""Eres un asistente para un profesor de Cálculo 1.
-Analiza estas preguntas de estudiantes de la última semana:
+                prompt = f"""You are an assistant for a Calculus 1 professor.
+Analyze these student questions from the past week:
 
 {texto}
+
 Generate a very short weekly instructor report in English.
 
 Rules:
@@ -109,22 +110,21 @@ Rules:
 - Maximum 70 words.
 - Use only these sections:
 
-## Resumen semanal
-**Actividad**
-- Estudiantes activos: X
-- Preguntas: X
+## Weekly Summary
+**Activity**
+- Active students: X
+- Questions: X
 
-**Temas**
-- Tema 1
-- Tema 2
+**Topics**
+- Topic 1
+- Topic 2
 
-**Dudas**
-- Duda 1
-- Duda 2
+**Doubts**
+- Doubt 1
+- Doubt 2
 
-**Recomendación**
-- Recomendación 1"""
-
+**Recommendation**
+- Recommendation 1"""
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
                     contents=prompt
