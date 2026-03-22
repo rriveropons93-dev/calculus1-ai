@@ -102,7 +102,7 @@ Analyze these student questions from the past week:
 {texto}
 
 Generate a very short weekly instructor report in English.
-No title or headerat the top. Just the report.
+No title or headerat the top. Start directly with **Activity**
 
 Rules:
 - No introduction.
