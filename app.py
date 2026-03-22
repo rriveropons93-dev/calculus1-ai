@@ -15,7 +15,7 @@ if st.session_state.modo is None:
     st.title("📚 Calculus 1 AI Assistant")
     st.markdown("<small>Developed by Roger Riveropons | rriveropons93@gmail.com</small>", unsafe_allow_html=True)
     st.markdown("---")
-    if st.expander("ℹ️ Help & Features"):
+    with st.expander("ℹ️ Help & Features"):
         st.markdown("**👤 Guest** - Try the AI assistant without logging in. No history saved.")
         st.markdown("**🎓 Student** - Log in with your Student ID. Chat with the AI assistant. Your conversations are saved and reviewed by your professor.")
         st.markdown("**👨‍🏫 Professor** - Manage students (create, view). View full chat history per student. Get AI analysis of each student's learning patterns Generate weekly course report with top topics and recurring doubts.")
