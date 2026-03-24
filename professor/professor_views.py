@@ -55,16 +55,19 @@ def vista_lista_estudiantes(db):
  
         # Search filter
         busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
-        filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
  
-        if not filtrados:
-            st.caption("No match found.")
+        if busqueda:
+            filtrados = [n for n in nombres if busqueda.lower() in n.lower()]
+            if not filtrados:
+                st.caption("No match found.")
+            else:
+                for nombre in filtrados:
+                    if st.button(f"  {nombre}", key=f"est_{nombre}", use_container_width=True):
+                        st.session_state.estudiante_seleccionado = nombre
+                        st.session_state.prof_vista = "detalle"
+                        st.rerun()
         else:
-            for nombre in filtrados:
-                if st.button(f"  {nombre}", key=f"est_{nombre}", use_container_width=True):
-                    st.session_state.estudiante_seleccionado = nombre
-                    st.session_state.prof_vista = "detalle"
-                    st.rerun()
+            st.caption(f"{len(nombres)} students enrolled.")
  
     st.markdown("<div style='margin-top:1.2rem'></div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
