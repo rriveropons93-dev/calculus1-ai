@@ -35,18 +35,24 @@ def vista_lista_estudiantes(db):
     if not estudiantes:
         st.caption("No students yet.")
     else:
-        nombres = [e.to_dict()["id"] for e in estudiantes]
         busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
-        filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
+        filtrados = [e for e in estudiantes if busqueda.lower() in e.to_dict().get("id","").lower()] if busqueda else estudiantes
 
-        rows_html = "".join([
-            f'<a href="?modo=professor&open_student={n}" target="_self" style="'
-            'display:block;padding:6px 10px;font-size:0.82rem;color:#374151;'
-            'text-decoration:none;border-bottom:1px solid #f0f0f5;"'
-            f'onmouseover="this.style.background=\'#f3f4ff\';this.style.color=\'#4f46e5\'"'
-            f'onmouseout="this.style.background=\'\';this.style.color=\'#374151\'">{n}</a>'
-            for n in filtrados
-        ])
+        def fila(e):
+            d   = e.to_dict()
+            uid = d.get("id", "")
+            last = d.get("last_name", "")
+            sid  = d.get("student_id", "")
+            label = f"{uid} {last}&nbsp;&nbsp;<span style='color:#9ca3af;font-size:0.75rem'>{sid}</span>"
+            return (
+                f'<a href="?modo=professor&open_student={uid}" target="_self" style="'
+                'display:block;padding:6px 10px;font-size:0.82rem;color:#374151;'
+                f'text-decoration:none;border-bottom:1px solid #f0f0f5;"'
+                f'onmouseover="this.style.background=\'#f3f4ff\'"'
+                f'onmouseout="this.style.background=\'\'"> {label}</a>'
+            )
+
+        rows_html = "".join([fila(e) for e in filtrados])
 
         with st.expander(f"All students ({len(filtrados)})"):
             st.markdown(
