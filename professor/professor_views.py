@@ -7,13 +7,15 @@ STYLES = """
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: #9ca3af; margin-bottom: 0.6rem;
 }
-/* Make student buttons look like list rows */
+/* Make student buttons look like compact list rows */
 div[data-testid="stVerticalBlock"] button[kind="secondary"] {
     background: transparent !important;
     border: none !important;
     border-bottom: 1px solid #f0f0f5 !important;
     border-radius: 0 !important;
-    padding: 0.4rem 0.2rem !important;
+    padding: 0.2rem 0.4rem !important;
+    min-height: 0 !important;
+    height: 2rem !important;
     text-align: left !important;
     font-size: 0.85rem !important;
     color: #374151 !important;
@@ -21,9 +23,10 @@ div[data-testid="stVerticalBlock"] button[kind="secondary"] {
     justify-content: flex-start !important;
 }
 div[data-testid="stVerticalBlock"] button[kind="secondary"]:hover {
-    background: #f8f9ff !important;
+    background: #f3f4ff !important;
     color: #4f46e5 !important;
 }
+[data-testid="stVerticalBlock"] > div { gap: 0 !important; margin-bottom: 0 !important; }
 </style>
 """
  
