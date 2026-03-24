@@ -7,33 +7,26 @@ STYLES = """
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: #9ca3af; margin-bottom: 0.4rem;
 }
-/* Kill ALL gaps inside student list */
-.student-list-wrap > div,
-.student-list-wrap > div > div,
-.student-list-wrap [data-testid="stVerticalBlock"],
-.student-list-wrap [data-testid="stVerticalBlock"] > div,
-.student-list-wrap [data-testid="stElementContainer"] {
-    gap: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
+/* Compact buttons inside expander only */
+.streamlit-expanderContent [data-testid="stElementContainer"] {
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
 }
-.student-list-wrap button[kind="secondary"] {
+.streamlit-expanderContent button[kind="secondary"] {
     background: transparent !important;
     border: none !important;
     border-bottom: 1px solid #f0f0f5 !important;
     border-radius: 0 !important;
-    padding: 0.3rem 0.6rem !important;
+    padding: 5px 10px !important;
     min-height: 0 !important;
-    height: 1.9rem !important;
-    text-align: left !important;
-    font-size: 0.83rem !important;
+    height: 1.8rem !important;
+    font-size: 0.82rem !important;
     color: #374151 !important;
     box-shadow: none !important;
     justify-content: flex-start !important;
-    width: 100% !important;
-    display: flex !important;
+    width: 100%;
 }
-.student-list-wrap button[kind="secondary"]:hover {
+.streamlit-expanderContent button[kind="secondary"]:hover {
     background: #f3f4ff !important;
     color: #4f46e5 !important;
 }
@@ -68,31 +61,12 @@ def vista_lista_estudiantes(db):
         busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
         filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
 
-        # Check if a student was clicked via query params
-        params = st.query_params
-        if "open_student" in params:
-            nombre_click = params["open_student"]
-            st.query_params.clear()
-            st.session_state.estudiante_seleccionado = nombre_click
-            st.session_state.prof_vista = "detalle"
-            st.rerun()
-
-        # Build compact HTML list inside expander
-        rows_html = "".join([
-            f'''<a href="?open_student={n}" target="_self" style="
-                display:block; padding:5px 10px; font-size:0.82rem;
-                color:#374151; text-decoration:none;
-                border-bottom:1px solid #f0f0f5;">
-                {n}
-            </a>'''
-            for n in filtrados
-        ])
         with st.expander(f"All students ({len(filtrados)})"):
-            st.markdown(f"""
-            <div style="margin:-8px -12px; overflow:hidden;">
-                {rows_html}
-            </div>
-            """, unsafe_allow_html=True)
+            for nombre in filtrados:
+                if st.button(nombre, key=f"est_{nombre}", use_container_width=True):
+                    st.session_state.estudiante_seleccionado = nombre
+                    st.session_state.prof_vista = "detalle"
+                    st.rerun()
 
     st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
     if st.button("📊 Course Stats", use_container_width=True):
