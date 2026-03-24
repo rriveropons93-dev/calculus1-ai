@@ -12,14 +12,16 @@ st.set_page_config(
     initial_sidebar_state="collapsed",
 )
 
-st.markdown("""
+modo_actual = st.session_state.get("modo")
+max_w = "780px" if modo_actual in ("student", "guest") else "420px"
+st.markdown(f"""
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
-html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
-#MainMenu, footer, header { visibility: hidden; }
-.block-container { padding-top: 3rem; max-width: 420px; }
-.app-title { text-align:center; font-size:1.5rem; font-weight:600; color:#1a1a2e; margin-bottom:2px; }
-.app-subtitle { text-align:center; font-size:0.78rem; color:#9ca3af; margin-bottom:1.6rem; letter-spacing:.02em; }
+html, body, [class*="css"] {{ font-family: 'DM Sans', sans-serif; }}
+#MainMenu, footer, header {{ visibility: hidden; }}
+.block-container {{ padding-top: 2rem; max-width: {max_w}; }}
+.app-title {{ text-align:center; font-size:1.5rem; font-weight:600; color:#1a1a2e; margin-bottom:2px; }}
+.app-subtitle {{ text-align:center; font-size:0.78rem; color:#9ca3af; margin-bottom:1.6rem; letter-spacing:.02em; }}
 </style>
 """, unsafe_allow_html=True)
 
