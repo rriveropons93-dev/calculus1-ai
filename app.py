@@ -3,7 +3,9 @@ from utils.firebase_utils import init_firebase
 from utils.gemini_utils import init_gemini
 from guest import modo_guest
 from professor.professor import modo_profesor
-from student.student import modo_studentst.markdown("""
+from student.student import modo_student
+
+st.markdown("""
 <style>
 .login-card {
     max-width: 400px;
