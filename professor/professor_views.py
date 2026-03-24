@@ -49,6 +49,7 @@ def vista_lista_estudiantes(db):
  
     st.markdown("<div class='section-title'>Students</div>", unsafe_allow_html=True)
  
+    import pandas as pd
     estudiantes = list(db.collection("usuarios").where("rol", "==", "student").stream())
  
     if not estudiantes:
@@ -56,49 +57,30 @@ def vista_lista_estudiantes(db):
     else:
         nombres = [e.to_dict()["id"] for e in estudiantes]
  
-        # Search filter
         busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
+        filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
  
-        if busqueda:
-            filtrados = [n for n in nombres if busqueda.lower() in n.lower()]
-            if not filtrados:
-                st.caption("No match found.")
-            else:
-                for nombre in filtrados:
-                    if st.button(f"  {nombre}", key=f"est_{nombre}", use_container_width=True):
-                        st.session_state.estudiante_seleccionado = nombre
-                        st.session_state.prof_vista = "detalle"
-                        st.rerun()
-        else:
-            with st.expander(f"Show all ({len(nombres)})"):
-                import pandas as pd
-                df = pd.DataFrame({"Student": nombres})
-                sel = st.dataframe(
-                    df,
-                    hide_index=True,
-                    use_container_width=True,
-                    selection_mode="single-row",
-                    on_select="rerun",
-                    key="df_students"
-                )
-                rows = sel.selection.rows
-                if rows:
-                    elegido = nombres[rows[0]]
-                    if st.button(f"Open {elegido} →", key="open_student", type="primary"):
-                        st.session_state.estudiante_seleccionado = elegido
-                        st.session_state.prof_vista = "detalle"
-                        st.rerun()
+        df = pd.DataFrame({"Student": filtrados})
+        sel = st.dataframe(
+            df,
+            hide_index=True,
+            use_container_width=True,
+            selection_mode="single-row",
+            on_select="rerun",
+            key="df_students"
+        )
+        rows = sel.selection.rows
+        if rows:
+            elegido = filtrados[rows[0]]
+            if st.button(f"View {elegido} →", key="open_student", type="primary"):
+                st.session_state.estudiante_seleccionado = elegido
+                st.session_state.prof_vista = "detalle"
+                st.rerun()
  
-    st.markdown("<div style='margin-top:1.2rem'></div>", unsafe_allow_html=True)
-    c1, c2 = st.columns(2)
-    with c1:
-        if st.button("＋ Add Student", use_container_width=True):
-            st.session_state.prof_vista = "agregar"
-            st.rerun()
-    with c2:
-        if st.button("📊 Stats", use_container_width=True):
-            st.session_state.prof_vista = "estadisticas"
-            st.rerun()
+    st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
+    if st.button("📊 Course Stats", use_container_width=True):
+        st.session_state.prof_vista = "estadisticas"
+        st.rerun()
  
  
 # ─────────────────────────────────────────────────────────────────────────────
