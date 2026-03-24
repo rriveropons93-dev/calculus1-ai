@@ -174,20 +174,40 @@ def vista_detalle_estudiante(db, student_id, client):
             with st.spinner("Analyzing with Gemini..."):
                 historial = "\n".join(
                     [f"{m['role'].upper()}: {m['content']}" for m in mensajes])
-                prompt = f"""You are an assistant for a Calculus 1 professor.
-Analyze these student questions from the student chat::
+                prompt = f"""You are an assistant helping a Calculus I professor review a student's chat history.
+Analyze the following student chat:
 
 {historial}
 
-Respond always in English with :
-1. Temas principales consultados
-2. Dudas recurrentes o confusiones
-3. Temas donde tuvo más dificultad
-4. Observación breve sobre el patrón de aprendizaje del estudiante
-Generate the analisys in English, don't matter the leanguage from the chat
-Sé conciso y útil para el profesor.
-Do not include any introduction or preamble.
-Start directly with the analysis."""
+Instructions:
+- Always respond in English only.
+- Do not use Spanish at any point.
+- Be concise, clear, and useful for the professor.
+- Do not include any introduction, greeting, or preamble.
+- Start directly with the analysis.
+- Focus only on the student's learning patterns and academic needs.
+
+Use exactly this structure:
+
+1. Main topics consulted
+- 2 to 4 short bullet points
+
+2. Recurrent doubts or confusions
+- 2 to 4 short bullet points
+
+3. Topics where the student showed more difficulty
+- 1 to 3 short bullet points
+
+4. Brief observation about the student's learning pattern
+- 2 to 4 short bullet points
+
+Additional rules:
+- Keep the full analysis compact.
+- Use short bullet points, not long paragraphs.
+- Do not repeat the same idea in multiple sections.
+- If the data is limited, say so briefly in English.
+- Do not mention the language of the original chat.
+"""
 
                 response = client.models.generate_content(
                     model="gemini-2.5-flash",
