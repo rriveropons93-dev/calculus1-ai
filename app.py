@@ -12,7 +12,7 @@ st.markdown("""
 #MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}
-.block-container {padding-top: 1rem; max-width: 420px;}
+.block-container {padding-top: 2rem; max-width: 500px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -21,26 +21,25 @@ client = init_gemini()
 
 if "modo" not in st.session_state:
     st.session_state.modo = None
+if "student_id" not in st.session_state:
+    st.session_state.student_id = None
 
 if st.session_state.modo is None:
-    st.markdown("<h4 style='text-align:center;margin-bottom:0'>🎓 Calculus 1 AI Assistant</h4>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center;color:#888;font-size:12px;'>Developed by Roger Riveropons</p>", unsafe_allow_html=True)
+    st.markdown("<h4 style='text-align:center;margin-bottom:2px'>🎓 Calculus 1 AI Assistant</h4>", unsafe_allow_html=True)
+    st.markdown("<p style='text-align:center;color:#888;font-size:12px;margin-bottom:16px'>Developed by Roger Riveropons</p>", unsafe_allow_html=True)
 
     with st.expander("ℹ️ Help & Features"):
         st.markdown("**👤 Guest** - Try the AI without logging in.")
         st.markdown("**🎓 Student** - Log in and chat. History saved.")
         st.markdown("**👨‍🏫 Professor** - View chats, analysis, weekly report.")
 
-    usuario = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-
-    col1, col2 = st.columns(2)
-    with col1:
+    _, col, _ = st.columns([1, 2, 1])
+    with col:
+        usuario = st.text_input("Username")
+        password = st.text_input("Password", type="password")
         login = st.button("Login", use_container_width=True)
-    with col2:
         guest = st.button("Continue as Guest", use_container_width=True)
-
-    st.button("📝 Register", use_container_width=True, key="reg")
+        register = st.button("📝 Register", use_container_width=True)
 
     if login:
         if not usuario or not password:
@@ -59,15 +58,20 @@ if st.session_state.modo is None:
         st.session_state.modo = "guest"
         st.rerun()
 
-    if st.session_state.get("reg"):
+    if register:
         st.session_state.modo = "register"
         st.rerun()
 
 elif st.session_state.modo == "register":
     st.markdown("<h4 style='text-align:center'>📝 Create Account</h4>", unsafe_allow_html=True)
-    nuevo_usuario = st.text_input("Username")
-    nuevo_password = st.text_input("Password", type="password")
-    if st.button("Create Account", use_container_width=True):
+    _, col, _ = st.columns([1, 2, 1])
+    with col:
+        nuevo_usuario = st.text_input("Username")
+        nuevo_password = st.text_input("Password", type="password")
+        crear = st.button("Create Account", use_container_width=True)
+        back = st.button("← Back", use_container_width=True)
+
+    if crear:
         if not nuevo_usuario or not nuevo_password:
             st.error("Fill in all fields.")
         else:
@@ -75,11 +79,16 @@ elif st.session_state.modo == "register":
             if doc.exists:
                 st.error("Username already taken.")
             else:
-                db.collection("usuarios").document(nuevo_usuario).set({"id": nuevo_usuario, "password": nuevo_password, "rol": "student"})
+                db.collection("usuarios").document(nuevo_usuario).set({
+                    "id": nuevo_usuario,
+                    "password": nuevo_password,
+                    "rol": "student"
+                })
                 st.success("Account created! You can now log in.")
                 st.session_state.modo = None
                 st.rerun()
-    if st.button("← Back", use_container_width=True):
+
+    if back:
         st.session_state.modo = None
         st.rerun()
 
