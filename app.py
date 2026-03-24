@@ -80,8 +80,7 @@ if st.session_state.modo is None:
     with st.expander("ℹ️ Help & Features"):
         st.markdown(
             "**👤 Guest** — Try the AI without logging in.  \n"
-            "**🎓 Student** — Log in and chat. History saved.  \n"
-            "**👨‍🏫 Professor** — View chats, analysis & weekly report."
+            "**🎓 Student** — Log in and chat. History saved.  \n"            
         )
  
     usuario  = st.text_input("Username")
