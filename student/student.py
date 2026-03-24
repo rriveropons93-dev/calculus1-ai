@@ -44,7 +44,19 @@ def modo_student(client, db):
             st.session_state.modo = None
             st.session_state.student_id = None
             st.session_state.mensajes = []
-            st.rerun()
+            st.session_state.mensajes.append({"role": "assistant", "content": response.text})
+
+        db.collection("chats").document(student_id).set({
+            "mensajes": st.session_state.mensajes,
+            "ultima_actualizacion": datetime.now().isoformat()
+        })
+
+        st.components.v1.html("""
+        <script>
+            window.parent.document.querySelector('[data-testid="stChatMessageContent"]')
+                ?.scrollIntoView({behavior: 'smooth', block: 'start'});
+        </script>
+        """, height=0)
 
     # ── Load chat history ─────────────────────────────────────────────────────
     if "mensajes" not in st.session_state:
