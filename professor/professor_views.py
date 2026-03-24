@@ -1,5 +1,6 @@
 import streamlit as st
 from datetime import datetime, timedelta
+from utils.prompt import get_prompt_student_analysis, get_prompt_weekly_report
 
 STYLES = """
 <style>
@@ -117,15 +118,7 @@ def vista_estadisticas(db, client):
         else:
             with st.spinner("Analyzing..."):
                 texto = "\n".join([f"- {m['content']}" for m in preguntas])
-                prompt = f"""You are an assistant for a Calculus 1 professor.
-Analyze these student questions from the past week:\n{texto}\n
-Generate a very short weekly instructor report in English.
-Start directly with **Activity**. No title, no intro. Max 70 words.
-## Weekly Summary
-**Activity**\n- Active students: X\n- Questions: X
-**Topics**\n- Topic 1
-**Doubts**\n- Doubt 1
-**Recommendation**\n- Recommendation 1"""
+                prompt = get_prompt_student_analysis(texto)
                 resp = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
                 st.markdown(resp.text)
 
@@ -160,13 +153,6 @@ def vista_detalle_estudiante(db, student_id, client):
         if st.button("Generate Analysis", use_container_width=True):
             with st.spinner("Analyzing..."):
                 historial = "\n".join([f"{m['role'].upper()}: {m['content']}" for m in mensajes])
-                prompt = f"""You are an assistant helping a Calculus I professor review a student's chat history.
-Analyze:\n{historial}\n
-- English only. Start directly. No intro.
-1. Main topics consulted (2-4 bullets)
-2. Recurrent doubts (2-4 bullets)
-3. Most difficult topics (1-3 bullets)
-4. Learning pattern observation (2-4 bullets)
-Short bullets only."""
+                prompt = get_prompt_weekly_report(historial)
                 resp = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
                 st.markdown(resp.text)

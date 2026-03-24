@@ -85,3 +85,25 @@ Background knowledge:
 {material}
 
 PREGUNTA: {pregunta}"""
+
+def get_prompt_student_analysis(historial):
+    return f"""You are an assistant helping a Calculus I professor review a student's chat history.
+Analyze:\n{historial}\n
+- English only. Start directly. No intro.
+1. Main topics consulted (2-4 bullets)
+2. Recurrent doubts (2-4 bullets)
+3. Most difficult topics (1-3 bullets)
+4. Learning pattern observation (2-4 bullets)
+Short bullets only."""
+
+
+def get_prompt_weekly_report(texto):
+    return f"""You are an assistant for a Calculus 1 professor.
+Analyze these student questions from the past week:\n{texto}\n
+Generate a very short weekly instructor report in English.
+Start directly with **Activity**. No title, no intro. Max 70 words.
+## Weekly Summary
+**Activity**\n- Active students: X\n- Questions: X
+**Topics**\n- Topic 1
+**Doubts**\n- Doubt 1
+**Recommendation**\n- Recommendation 1"""
