@@ -14,6 +14,27 @@ st.set_page_config(
 
 st.markdown("""
 <style>
+    /* Oculta el header y footer de Streamlit */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Reduce el padding general */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 0rem;
+        max-width: 450px;
+    }
+    
+    /* Reduce tamaño de fuente general */
+    html, body, [class*="css"] {
+        font-size: 14px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+st.markdown("""
+<style>
 .login-card {
     max-width: 400px;
     margin: 80px auto;
