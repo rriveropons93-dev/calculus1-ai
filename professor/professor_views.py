@@ -5,28 +5,38 @@ STYLES = """
 <style>
 .section-title {
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: #9ca3af; margin-bottom: 0.6rem;
+    text-transform: uppercase; color: #9ca3af; margin-bottom: 0.4rem;
 }
-/* Make student buttons look like compact list rows */
-div[data-testid="stVerticalBlock"] button[kind="secondary"] {
+/* Kill ALL gaps inside student list */
+.student-list-wrap > div,
+.student-list-wrap > div > div,
+.student-list-wrap [data-testid="stVerticalBlock"],
+.student-list-wrap [data-testid="stVerticalBlock"] > div,
+.student-list-wrap [data-testid="stElementContainer"] {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.student-list-wrap button[kind="secondary"] {
     background: transparent !important;
     border: none !important;
     border-bottom: 1px solid #f0f0f5 !important;
     border-radius: 0 !important;
-    padding: 0.2rem 0.4rem !important;
+    padding: 0.3rem 0.6rem !important;
     min-height: 0 !important;
-    height: 2rem !important;
+    height: 1.9rem !important;
     text-align: left !important;
-    font-size: 0.85rem !important;
+    font-size: 0.83rem !important;
     color: #374151 !important;
     box-shadow: none !important;
     justify-content: flex-start !important;
+    width: 100% !important;
+    display: flex !important;
 }
-div[data-testid="stVerticalBlock"] button[kind="secondary"]:hover {
+.student-list-wrap button[kind="secondary"]:hover {
     background: #f3f4ff !important;
     color: #4f46e5 !important;
 }
-[data-testid="stVerticalBlock"] > div { gap: 0 !important; margin-bottom: 0 !important; }
 </style>
 """
  
@@ -49,33 +59,22 @@ def vista_lista_estudiantes(db):
  
     st.markdown("<div class='section-title'>Students</div>", unsafe_allow_html=True)
  
-    import pandas as pd
     estudiantes = list(db.collection("usuarios").where("rol", "==", "student").stream())
  
     if not estudiantes:
         st.caption("No students yet.")
     else:
         nombres = [e.to_dict()["id"] for e in estudiantes]
- 
         busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
         filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
  
-        df = pd.DataFrame({"Student": filtrados})
-        sel = st.dataframe(
-            df,
-            hide_index=True,
-            use_container_width=True,
-            selection_mode="single-row",
-            on_select="rerun",
-            key="df_students"
-        )
-        rows = sel.selection.rows
-        if rows:
-            elegido = filtrados[rows[0]]
-            if st.button(f"View {elegido} →", key="open_student", type="primary"):
-                st.session_state.estudiante_seleccionado = elegido
+        st.markdown("<div class='student-list-wrap'>", unsafe_allow_html=True)
+        for nombre in filtrados:
+            if st.button(nombre, key=f"est_{nombre}", use_container_width=True):
+                st.session_state.estudiante_seleccionado = nombre
                 st.session_state.prof_vista = "detalle"
                 st.rerun()
+        st.markdown("</div>", unsafe_allow_html=True)
  
     st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
     if st.button("📊 Course Stats", use_container_width=True):
