@@ -174,17 +174,17 @@ def vista_detalle_estudiante(db, student_id, client):
             with st.spinner("Analyzing with Gemini..."):
                 historial = "\n".join(
                     [f"{m['role'].upper()}: {m['content']}" for m in mensajes])
-                prompt = f"""Eres un asistente para un profesor de Cálculo 1.
-Analiza el siguiente historial de chat de un estudiante:
+                prompt = f"""You are an assistant for a Calculus 1 professor.
+Analyze these student questions from the student chat::
 
 {historial}
 
-Respond in English with :
+Respond always in English with :
 1. Temas principales consultados
 2. Dudas recurrentes o confusiones
 3. Temas donde tuvo más dificultad
 4. Observación breve sobre el patrón de aprendizaje del estudiante
-
+Generate the analisys in English, don't matter the leanguage from the chat
 Sé conciso y útil para el profesor.
 Do not include any introduction or preamble.
 Start directly with the analysis."""
