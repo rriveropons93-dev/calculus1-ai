@@ -50,7 +50,7 @@ def modo_student(client, db):
             st.write(msg["content"])
 
     anchor.markdown('<div id="bottom"></div>', unsafe_allow_html=True)
-    
+
     # ── Chat input ────────────────────────────────────────────────────────────
     if pregunta := st.chat_input("What do you want to study?"):
         st.session_state.mensajes.append({"role": "user", "content": pregunta})
@@ -74,4 +74,4 @@ def modo_student(client, db):
             "ultima_actualizacion": datetime.now().isoformat()
         })
 
-    st.rerun()
+        st.rerun()
