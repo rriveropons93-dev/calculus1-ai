@@ -5,6 +5,13 @@ from guest import modo_guest
 from professor.professor import modo_profesor
 from student.student import modo_student
 
+st.set_page_config(
+    page_title="Calculus 1 AI",
+    page_icon="🎓",
+    layout="centered",
+    initial_sidebar_state="collapsed"
+)
+
 st.markdown("""
 <style>
 .login-card {
