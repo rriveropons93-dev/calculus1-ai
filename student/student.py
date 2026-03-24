@@ -36,7 +36,9 @@ def modo_student(client, db):
     col_title, col_back = st.columns([6, 1])
     with col_title:
         st.markdown(f"<div class='student-title'>📚 Calculus 1 AI</div>", unsafe_allow_html=True)
-        st.markdown(f"<div class='student-sub'>Welcome, {student_id}</div>", unsafe_allow_html=True)
+        info = db.collection("usuarios").document(student_id).get().to_dict()
+        nombre = info.get("first_name", student_id) if info else student_id
+        st.markdown(f"<div class='student-sub'>Welcome, {nombre}</div>", unsafe_allow_html=True)
     with col_back:
         if st.button("logout", key="back_student"):
             st.session_state.modo = None
