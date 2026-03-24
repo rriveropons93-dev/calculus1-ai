@@ -1,49 +1,103 @@
+
+Copy
+
 import streamlit as st
 from utils.firebase_utils import init_firebase
 from utils.gemini_utils import init_gemini
 from guest import modo_guest
 from professor.professor import modo_profesor
 from student.student import modo_student
-
-st.set_page_config(page_title="Calculus 1 AI", page_icon="🎓", layout="centered", initial_sidebar_state="collapsed")
-
+ 
+# ── Page config ──────────────────────────────────────────────────────────────
+st.set_page_config(
+    page_title="Calculus 1 AI",
+    page_icon="🎓",
+    layout="centered",
+    initial_sidebar_state="collapsed",
+)
+ 
+# ── Global styles ─────────────────────────────────────────────────────────────
 st.markdown("""
 <style>
-#MainMenu {visibility: hidden;}
-footer {visibility: hidden;}
-header {visibility: hidden;}
-.block-container {padding-top: 2rem; max-width: 500px;}
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&display=swap');
+ 
+html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
+ 
+#MainMenu, footer, header { visibility: hidden; }
+ 
+.block-container {
+    padding-top: 3rem;
+    max-width: 420px;
+}
+ 
+/* ── Card ── */
+.card {
+    background: #ffffff;
+    border: 1px solid #e8eaf0;
+    border-radius: 16px;
+    padding: 2rem 2rem 1.5rem;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+ 
+/* ── Title block ── */
+.app-title {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 2px;
+}
+.app-subtitle {
+    text-align: center;
+    font-size: 0.78rem;
+    color: #9ca3af;
+    margin-bottom: 1.6rem;
+    letter-spacing: 0.02em;
+}
+ 
+/* ── Divider ── */
+.divider {
+    border: none;
+    border-top: 1px solid #f0f0f5;
+    margin: 1rem 0;
+}
 </style>
 """, unsafe_allow_html=True)
-
-db = init_firebase()
+ 
+# ── Init services ─────────────────────────────────────────────────────────────
+db     = init_firebase()
 client = init_gemini()
-
-if "modo" not in st.session_state:
-    st.session_state.modo = None
-if "student_id" not in st.session_state:
-    st.session_state.student_id = None
-
+ 
+# ── Session defaults ──────────────────────────────────────────────────────────
+st.session_state.setdefault("modo", None)
+st.session_state.setdefault("student_id", None)
+ 
+# ─────────────────────────────────────────────────────────────────────────────
+#  LOGIN
+# ─────────────────────────────────────────────────────────────────────────────
 if st.session_state.modo is None:
-    st.markdown("<h4 style='text-align:center;margin-bottom:2px'>🎓 Calculus 1 AI Assistant</h4>", unsafe_allow_html=True)
-    st.markdown("<p style='text-align:center;color:#888;font-size:12px;margin-bottom:16px'>Developed by Roger Riveropons</p>", unsafe_allow_html=True)
-
+ 
+    st.markdown("<div class='app-title'>🎓 Calculus 1 AI Assistant</div>", unsafe_allow_html=True)
+    st.markdown("<div class='app-subtitle'>Developed by Roger Riveropons</div>", unsafe_allow_html=True)
+ 
     with st.expander("ℹ️ Help & Features"):
-        st.markdown("**👤 Guest** - Try the AI without logging in.")
-        st.markdown("**🎓 Student** - Log in and chat. History saved.")
-        st.markdown("**👨‍🏫 Professor** - View chats, analysis, weekly report.")
-
-    _, col, _ = st.columns([1.5, 1, 1.5])
-    with col:
-        usuario = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        login = st.button("Login", use_container_width=True)
-        guest = st.button("Continue as Guest", use_container_width=True)
-        register = st.button("📝 Register", use_container_width=True)
-
+        st.markdown(
+            "**👤 Guest** — Try the AI without logging in.  \n"
+            "**🎓 Student** — Log in and chat. History saved.  \n"
+            "**👨‍🏫 Professor** — View chats, analysis & weekly report."
+        )
+ 
+    usuario  = st.text_input("Username")
+    password = st.text_input("Password", type="password")
+ 
+    col1, col2 = st.columns(2)
+    login    = col1.button("Login",            use_container_width=True, type="primary")
+    guest    = col2.button("Continue as Guest", use_container_width=True)
+    register = st.button("📝 Register", use_container_width=True)
+ 
     if login:
         if not usuario or not password:
-            st.error("Enter username and password.")
+            st.error("Please enter your username and password.")
         else:
             doc = db.collection("usuarios").document(usuario).get()
             if doc.exists and doc.to_dict().get("password") == password:
@@ -53,50 +107,57 @@ if st.session_state.modo is None:
                 st.rerun()
             else:
                 st.error("Invalid username or password.")
-
+ 
     if guest:
         st.session_state.modo = "guest"
         st.rerun()
-
+ 
     if register:
         st.session_state.modo = "register"
         st.rerun()
-
+ 
+# ─────────────────────────────────────────────────────────────────────────────
+#  REGISTER
+# ─────────────────────────────────────────────────────────────────────────────
 elif st.session_state.modo == "register":
-    st.markdown("<h4 style='text-align:center'>📝 Create Account</h4>", unsafe_allow_html=True)
-    _, col, _ = st.columns([1.5, 1, 1.5])
-    with col:
-        nuevo_usuario = st.text_input("Username")
-        nuevo_password = st.text_input("Password", type="password")
-        crear = st.button("Create Account", use_container_width=True)
-        back = st.button("← Back", use_container_width=True)
-
+ 
+    st.markdown("<div class='app-title'>📝 Create Account</div>", unsafe_allow_html=True)
+    st.markdown("<div class='app-subtitle'>Join as a student</div>", unsafe_allow_html=True)
+ 
+    nuevo_usuario  = st.text_input("Username")
+    nuevo_password = st.text_input("Password", type="password")
+ 
+    col1, col2 = st.columns(2)
+    crear = col1.button("Create Account", use_container_width=True, type="primary")
+    back  = col2.button("← Back",         use_container_width=True)
+ 
     if crear:
         if not nuevo_usuario or not nuevo_password:
-            st.error("Fill in all fields.")
+            st.error("Please fill in all fields.")
+        elif db.collection("usuarios").document(nuevo_usuario).get().exists:
+            st.error("Username already taken.")
         else:
-            doc = db.collection("usuarios").document(nuevo_usuario).get()
-            if doc.exists:
-                st.error("Username already taken.")
-            else:
-                db.collection("usuarios").document(nuevo_usuario).set({
-                    "id": nuevo_usuario,
-                    "password": nuevo_password,
-                    "rol": "student"
-                })
-                st.success("Account created! You can now log in.")
-                st.session_state.modo = None
-                st.rerun()
-
+            db.collection("usuarios").document(nuevo_usuario).set({
+                "id":       nuevo_usuario,
+                "password": nuevo_password,
+                "rol":      "student",
+            })
+            st.success("Account created! You can now log in.")
+            st.session_state.modo = None
+            st.rerun()
+ 
     if back:
         st.session_state.modo = None
         st.rerun()
-
+ 
+# ─────────────────────────────────────────────────────────────────────────────
+#  APP MODES
+# ─────────────────────────────────────────────────────────────────────────────
 elif st.session_state.modo == "guest":
     modo_guest(client)
-
+ 
 elif st.session_state.modo == "student":
     modo_student(client, db)
-
+ 
 elif st.session_state.modo == "professor":
     modo_profesor(client, db)
