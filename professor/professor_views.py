@@ -1,11 +1,10 @@
 import streamlit as st
-from google.cloud.firestore_v1.base_query import FieldFilter
 from datetime import datetime, timedelta
 
 def vista_lista_estudiantes(db):
     st.subheader("Students")
     estudiantes = db.collection("usuarios").where(
-        filter=FieldFilter("rol", "==", "student")).stream()
+        filter=db.collection("usuarios").where("rol", "==", "student")).stream()
     lista = list(estudiantes)
 
     if not lista:
