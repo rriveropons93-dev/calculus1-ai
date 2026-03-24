@@ -1,6 +1,6 @@
 import streamlit as st
 from datetime import datetime, timedelta
- 
+
 STYLES = """
 <style>
 .section-title {
@@ -39,35 +39,35 @@ STYLES = """
 }
 </style>
 """
- 
+
 def _back(key="back"):
     if st.button("← Back", key=key):
         st.session_state.prof_vista = "lista"
         st.rerun()
- 
- 
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 def vista_lista_estudiantes(db):
     st.markdown(STYLES, unsafe_allow_html=True)
- 
+
     _, col_logout = st.columns([5, 1])
     with col_logout:
         if st.button("logout", key="logout_prof"):
             st.session_state.modo = None
             st.session_state.prof_vista = "lista"
             st.rerun()
- 
+
     st.markdown("<div class='section-title'>Students</div>", unsafe_allow_html=True)
- 
+
     estudiantes = list(db.collection("usuarios").where("rol", "==", "student").stream())
- 
+
     if not estudiantes:
         st.caption("No students yet.")
     else:
         nombres = [e.to_dict()["id"] for e in estudiantes]
         busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
         filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
- 
+
         # Check if a student was clicked via query params
         params = st.query_params
         if "open_student" in params:
@@ -76,35 +76,35 @@ def vista_lista_estudiantes(db):
             st.session_state.estudiante_seleccionado = nombre_click
             st.session_state.prof_vista = "detalle"
             st.rerun()
- 
-        # Build compact HTML list
+
+        # Build compact HTML list inside expander
         rows_html = "".join([
             f'''<a href="?open_student={n}" target="_self" style="
-                display:block; padding:7px 10px; font-size:0.85rem;
+                display:block; padding:5px 10px; font-size:0.82rem;
                 color:#374151; text-decoration:none;
-                border-bottom:1px solid #f0f0f5;
-                transition:background 0.15s;">
+                border-bottom:1px solid #f0f0f5;">
                 {n}
             </a>'''
             for n in filtrados
         ])
-        st.markdown(f"""
-        <div style="border:1px solid #e8eaf0; border-radius:8px; overflow:hidden; margin-top:4px;">
-            {rows_html}
-        </div>
-        """, unsafe_allow_html=True)
- 
+        with st.expander(f"All students ({len(filtrados)})"):
+            st.markdown(f"""
+            <div style="margin:-8px -12px; overflow:hidden;">
+                {rows_html}
+            </div>
+            """, unsafe_allow_html=True)
+
     st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
     if st.button("📊 Course Stats", use_container_width=True):
         st.session_state.prof_vista = "estadisticas"
         st.rerun()
- 
- 
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 def vista_agregar_estudiante(db):
     _back("back_agregar")
     st.markdown("<div class='section-title'>New Student</div>", unsafe_allow_html=True)
- 
+
     with st.form("form_estudiante"):
         student_id = st.text_input("Student ID", placeholder="e.g. john_doe")
         if st.form_submit_button("Create", use_container_width=True, type="primary"):
@@ -119,16 +119,16 @@ def vista_agregar_estudiante(db):
                 st.success(f"Student '{student_id}' created.")
                 st.session_state.prof_vista = "lista"
                 st.rerun()
- 
- 
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 def vista_estadisticas(db, client):
     _back("back_stats")
     st.markdown("<div class='section-title'>Course Stats · Last 7 days</div>", unsafe_allow_html=True)
- 
+
     hace_7 = (datetime.now() - timedelta(days=7)).isoformat()
     chats  = list(db.collection("chats").stream())
- 
+
     activos, total_q, preguntas = [], 0, []
     for chat in chats:
         data = chat.to_dict()
@@ -138,16 +138,16 @@ def vista_estadisticas(db, client):
             activos.append(chat.id)
             total_q += len(qs)
             preguntas.extend(qs)
- 
+
     c1, c2 = st.columns(2)
     c1.metric("Active Students", len(activos))
     c2.metric("Questions Asked", total_q)
- 
+
     if activos:
         st.caption("Active: " + ", ".join(activos))
- 
+
     st.divider()
- 
+
     if st.button("🤖 Generate Weekly Report", use_container_width=True):
         if not preguntas:
             st.warning("No activity this week.")
@@ -156,85 +156,85 @@ def vista_estadisticas(db, client):
                 texto  = "\n".join([f"- {m['content']}" for m in preguntas])
                 prompt = f"""You are an assistant for a Calculus 1 professor.
 Analyze these student questions from the past week:
- 
+
 {texto}
- 
+
 Generate a very short weekly instructor report in English.
 Start directly with **Activity**. No title, no intro, no filler. Max 70 words.
- 
+
 ## Weekly Summary
 **Activity**
 - Active students: X
 - Questions: X
- 
+
 **Topics**
 - Topic 1
- 
+
 **Doubts**
 - Doubt 1
- 
+
 **Recommendation**
 - Recommendation 1"""
                 resp = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
                 st.markdown(resp.text)
- 
- 
+
+
 # ─────────────────────────────────────────────────────────────────────────────
 def vista_detalle_estudiante(db, student_id, client):
     _back("back_detalle")
     st.markdown(f"<div class='section-title'>{student_id}</div>", unsafe_allow_html=True)
- 
+
     doc = db.collection("chats").document(student_id).get()
     if not doc.exists or not doc.to_dict().get("mensajes"):
         st.caption("No chat history yet.")
         return
- 
+
     data      = doc.to_dict()
     mensajes  = data.get("mensajes", [])
     ultima    = data.get("ultima_actualizacion", "N/A")
     preguntas = [m for m in mensajes if m.get("role") == "user"]
- 
+
     c1, c2, c3 = st.columns(3)
     c1.metric("Messages",  len(mensajes))
     c2.metric("Questions", len(preguntas))
     c3.metric("Last Active", ultima[:10] if ultima != "N/A" else "—")
- 
+
     st.divider()
- 
+
     tab1, tab2 = st.tabs(["💬 Chat", "🤖 Analysis"])
- 
+
     with tab1:
         for msg in mensajes:
             with st.chat_message(msg["role"]):
                 st.write(msg["content"])
- 
+
     with tab2:
         if st.button("Generate Analysis", use_container_width=True):
             with st.spinner("Analyzing..."):
                 historial = "\n".join([f"{m['role'].upper()}: {m['content']}" for m in mensajes])
                 prompt = f"""You are an assistant helping a Calculus I professor review a student's chat history.
 Analyze the following student chat:
- 
+
 {historial}
- 
+
 Instructions:
 - Always respond in English only.
 - Be concise. Start directly with the analysis. No introduction.
- 
+
 Use exactly this structure:
- 
+
 1. Main topics consulted
 - 2 to 4 bullet points
- 
+
 2. Recurrent doubts or confusions
 - 2 to 4 bullet points
- 
+
 3. Topics with most difficulty
 - 1 to 3 bullet points
- 
+
 4. Brief observation about learning pattern
 - 2 to 4 bullet points
- 
+
 Keep it compact. Short bullets, no paragraphs."""
                 resp = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
                 st.markdown(resp.text)
