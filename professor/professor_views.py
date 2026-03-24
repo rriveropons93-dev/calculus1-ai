@@ -5,7 +5,24 @@ STYLES = """
 <style>
 .section-title {
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
-    text-transform: uppercase; color: #9ca3af; margin-bottom: 0.4rem;
+    text-transform: uppercase; color: #9ca3af; margin-bottom: 0.6rem;
+}
+/* Make student buttons look like list rows */
+div[data-testid="stVerticalBlock"] button[kind="secondary"] {
+    background: transparent !important;
+    border: none !important;
+    border-bottom: 1px solid #f0f0f5 !important;
+    border-radius: 0 !important;
+    padding: 0.4rem 0.2rem !important;
+    text-align: left !important;
+    font-size: 0.85rem !important;
+    color: #374151 !important;
+    box-shadow: none !important;
+    justify-content: flex-start !important;
+}
+div[data-testid="stVerticalBlock"] button[kind="secondary"]:hover {
+    background: #f8f9ff !important;
+    color: #4f46e5 !important;
 }
 </style>
 """
@@ -27,7 +44,6 @@ def vista_lista_estudiantes(db):
             st.session_state.prof_vista = "lista"
             st.rerun()
  
-    # ── Student selector ──────────────────────────────────────────────────────
     st.markdown("<div class='section-title'>Students</div>", unsafe_allow_html=True)
  
     estudiantes = list(db.collection("usuarios").where("rol", "==", "student").stream())
@@ -36,19 +52,21 @@ def vista_lista_estudiantes(db):
         st.caption("No students yet.")
     else:
         nombres = [e.to_dict()["id"] for e in estudiantes]
-        elegido = st.selectbox(
-            "Search or select a student",
-            options=["— select —"] + nombres,
-            label_visibility="collapsed",
-        )
-        if elegido != "— select —":
-            if st.button(f"View {elegido} →", use_container_width=False, type="primary"):
-                st.session_state.estudiante_seleccionado = elegido
-                st.session_state.prof_vista = "detalle"
-                st.rerun()
  
-    st.divider()
+        # Search filter
+        busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
+        filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
  
+        if not filtrados:
+            st.caption("No match found.")
+        else:
+            for nombre in filtrados:
+                if st.button(f"  {nombre}", key=f"est_{nombre}", use_container_width=True):
+                    st.session_state.estudiante_seleccionado = nombre
+                    st.session_state.prof_vista = "detalle"
+                    st.rerun()
+ 
+    st.markdown("<div style='margin-top:1.2rem'></div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
     with c1:
         if st.button("＋ Add Student", use_container_width=True):
