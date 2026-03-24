@@ -1,28 +1,17 @@
 import streamlit as st
 from datetime import datetime, timedelta
  
-# ── Shared styles ─────────────────────────────────────────────────────────────
 STYLES = """
 <style>
 .section-title {
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: #9ca3af; margin-bottom: 0.4rem;
 }
-.student-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0.45rem 0.6rem;
-    border-bottom: 1px solid #f0f0f5;
-    cursor: pointer;
-    font-size: 0.875rem; color: #1a1a2e;
-}
-.student-row:hover { background: #f8f9ff; border-radius: 6px; }
-.student-dot { color: #7c6ff7; margin-right: 6px; font-size: 0.65rem; }
-.action-row { display: flex; gap: 8px; margin-top: 1rem; }
 </style>
 """
  
-def _back(vista="lista"):
-    if st.button("← Back", key=f"back_{vista}"):
+def _back(key="back"):
+    if st.button("← Back", key=key):
         st.session_state.prof_vista = "lista"
         st.rerun()
  
@@ -31,14 +20,14 @@ def _back(vista="lista"):
 def vista_lista_estudiantes(db):
     st.markdown(STYLES, unsafe_allow_html=True)
  
-    # Header row
-    col_title, col_logout = st.columns([5, 1])
+    _, col_logout = st.columns([5, 1])
     with col_logout:
-        if st.button("logout", key="logout_prof", help="Back to login"):
+        if st.button("logout", key="logout_prof"):
             st.session_state.modo = None
             st.session_state.prof_vista = "lista"
             st.rerun()
  
+    # ── Student selector ──────────────────────────────────────────────────────
     st.markdown("<div class='section-title'>Students</div>", unsafe_allow_html=True)
  
     estudiantes = list(db.collection("usuarios").where("rol", "==", "student").stream())
@@ -46,16 +35,20 @@ def vista_lista_estudiantes(db):
     if not estudiantes:
         st.caption("No students yet.")
     else:
-        with st.container():
-            for est in estudiantes:
-                data = est.to_dict()
-                sid = data["id"]
-                if st.button(f"· {sid}", key=f"est_{sid}", use_container_width=True):
-                    st.session_state.estudiante_seleccionado = sid
-                    st.session_state.prof_vista = "detalle"
-                    st.rerun()
+        nombres = [e.to_dict()["id"] for e in estudiantes]
+        elegido = st.selectbox(
+            "Search or select a student",
+            options=["— select —"] + nombres,
+            label_visibility="collapsed",
+        )
+        if elegido != "— select —":
+            if st.button(f"View {elegido} →", use_container_width=False, type="primary"):
+                st.session_state.estudiante_seleccionado = elegido
+                st.session_state.prof_vista = "detalle"
+                st.rerun()
  
-    st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
+    st.divider()
+ 
     c1, c2 = st.columns(2)
     with c1:
         if st.button("＋ Add Student", use_container_width=True):
@@ -69,7 +62,7 @@ def vista_lista_estudiantes(db):
  
 # ─────────────────────────────────────────────────────────────────────────────
 def vista_agregar_estudiante(db):
-    _back("agregar")
+    _back("back_agregar")
     st.markdown("<div class='section-title'>New Student</div>", unsafe_allow_html=True)
  
     with st.form("form_estudiante"):
@@ -90,7 +83,7 @@ def vista_agregar_estudiante(db):
  
 # ─────────────────────────────────────────────────────────────────────────────
 def vista_estadisticas(db, client):
-    _back("estadisticas")
+    _back("back_stats")
     st.markdown("<div class='section-title'>Course Stats · Last 7 days</div>", unsafe_allow_html=True)
  
     hace_7 = (datetime.now() - timedelta(days=7)).isoformat()
@@ -127,12 +120,7 @@ Analyze these student questions from the past week:
 {texto}
  
 Generate a very short weekly instructor report in English.
-No title or header at the top. Start directly with **Activity**
- 
-Rules:
-- No introduction. No filler. No unnecessary sections.
-- Maximum 70 words.
-- Use only these sections:
+Start directly with **Activity**. No title, no intro, no filler. Max 70 words.
  
 ## Weekly Summary
 **Activity**
@@ -153,7 +141,7 @@ Rules:
  
 # ─────────────────────────────────────────────────────────────────────────────
 def vista_detalle_estudiante(db, student_id, client):
-    _back("detalle")
+    _back("back_detalle")
     st.markdown(f"<div class='section-title'>{student_id}</div>", unsafe_allow_html=True)
  
     doc = db.collection("chats").document(student_id).get()
@@ -161,9 +149,9 @@ def vista_detalle_estudiante(db, student_id, client):
         st.caption("No chat history yet.")
         return
  
-    data     = doc.to_dict()
-    mensajes = data.get("mensajes", [])
-    ultima   = data.get("ultima_actualizacion", "N/A")
+    data      = doc.to_dict()
+    mensajes  = data.get("mensajes", [])
+    ultima    = data.get("ultima_actualizacion", "N/A")
     preguntas = [m for m in mensajes if m.get("role") == "user"]
  
     c1, c2, c3 = st.columns(3)
@@ -191,8 +179,7 @@ Analyze the following student chat:
  
 Instructions:
 - Always respond in English only.
-- Be concise, clear, and useful for the professor.
-- Start directly with the analysis. No introduction.
+- Be concise. Start directly with the analysis. No introduction.
  
 Use exactly this structure:
  
