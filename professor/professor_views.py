@@ -71,11 +71,23 @@ def vista_lista_estudiantes(db):
                         st.rerun()
         else:
             with st.expander(f"Show all ({len(nombres)})"):
-                elegido = st.radio("", nombres, label_visibility="collapsed", key="radio_students")
-                if st.button("Open →", key="open_student", type="primary"):
-                    st.session_state.estudiante_seleccionado = elegido
-                    st.session_state.prof_vista = "detalle"
-                    st.rerun()
+                import pandas as pd
+                df = pd.DataFrame({"Student": nombres})
+                sel = st.dataframe(
+                    df,
+                    hide_index=True,
+                    use_container_width=True,
+                    selection_mode="single-row",
+                    on_select="rerun",
+                    key="df_students"
+                )
+                rows = sel.selection.rows
+                if rows:
+                    elegido = nombres[rows[0]]
+                    if st.button(f"Open {elegido} →", key="open_student", type="primary"):
+                        st.session_state.estudiante_seleccionado = elegido
+                        st.session_state.prof_vista = "detalle"
+                        st.rerun()
  
     st.markdown("<div style='margin-top:1.2rem'></div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
