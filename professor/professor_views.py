@@ -68,13 +68,31 @@ def vista_lista_estudiantes(db):
         busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
         filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
  
-        st.markdown("<div class='student-list-wrap'>", unsafe_allow_html=True)
-        for nombre in filtrados:
-            if st.button(nombre, key=f"est_{nombre}", use_container_width=True):
-                st.session_state.estudiante_seleccionado = nombre
-                st.session_state.prof_vista = "detalle"
-                st.rerun()
-        st.markdown("</div>", unsafe_allow_html=True)
+        # Check if a student was clicked via query params
+        params = st.query_params
+        if "open_student" in params:
+            nombre_click = params["open_student"]
+            st.query_params.clear()
+            st.session_state.estudiante_seleccionado = nombre_click
+            st.session_state.prof_vista = "detalle"
+            st.rerun()
+ 
+        # Build compact HTML list
+        rows_html = "".join([
+            f'''<a href="?open_student={n}" target="_self" style="
+                display:block; padding:7px 10px; font-size:0.85rem;
+                color:#374151; text-decoration:none;
+                border-bottom:1px solid #f0f0f5;
+                transition:background 0.15s;">
+                {n}
+            </a>'''
+            for n in filtrados
+        ])
+        st.markdown(f"""
+        <div style="border:1px solid #e8eaf0; border-radius:8px; overflow:hidden; margin-top:4px;">
+            {rows_html}
+        </div>
+        """, unsafe_allow_html=True)
  
     st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
     if st.button("📊 Course Stats", use_container_width=True):
