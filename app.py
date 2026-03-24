@@ -64,11 +64,10 @@ if st.session_state.modo is None:
         usuario  = st.text_input("Username")
         password = st.text_input("Password", type="password")
         login    = st.form_submit_button("Login", use_container_width=True, type="primary")
-        
+
     col1, col2 = st.columns(2)
-    login    = col1.button("Login",             use_container_width=True, type="primary")
-    guest    = col2.button("Continue as Guest", use_container_width=True)
-    register = st.button("📝 Register", use_container_width=True)
+    guest    = col1.button("Continue as Guest", use_container_width=True)
+    register = col2.button("📝 Register",       use_container_width=True)
  
     if login:
         if not usuario or not password:
