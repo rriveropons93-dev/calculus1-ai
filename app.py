@@ -33,7 +33,7 @@ if st.session_state.modo is None:
         st.markdown("**🎓 Student** - Log in and chat. History saved.")
         st.markdown("**👨‍🏫 Professor** - View chats, analysis, weekly report.")
 
-    _, col, _ = st.columns([1, 2, 1])
+    _, col, _ = st.columns([1.5, 1, 1.5])
     with col:
         usuario = st.text_input("Username")
         password = st.text_input("Password", type="password")
@@ -64,7 +64,7 @@ if st.session_state.modo is None:
 
 elif st.session_state.modo == "register":
     st.markdown("<h4 style='text-align:center'>📝 Create Account</h4>", unsafe_allow_html=True)
-    _, col, _ = st.columns([1, 2, 1])
+    _, col, _ = st.columns([1.5, 1, 1.5])
     with col:
         nuevo_usuario = st.text_input("Username")
         nuevo_password = st.text_input("Password", type="password")
