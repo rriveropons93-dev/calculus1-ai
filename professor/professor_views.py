@@ -7,29 +7,6 @@ STYLES = """
     font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: #9ca3af; margin-bottom: 0.4rem;
 }
-/* Compact buttons inside expander only */
-.streamlit-expanderContent [data-testid="stElementContainer"] {
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
-}
-.streamlit-expanderContent button[kind="secondary"] {
-    background: transparent !important;
-    border: none !important;
-    border-bottom: 1px solid #f0f0f5 !important;
-    border-radius: 0 !important;
-    padding: 5px 10px !important;
-    min-height: 0 !important;
-    height: 1.8rem !important;
-    font-size: 0.82rem !important;
-    color: #374151 !important;
-    box-shadow: none !important;
-    justify-content: flex-start !important;
-    width: 100%;
-}
-.streamlit-expanderContent button[kind="secondary"]:hover {
-    background: #f3f4ff !important;
-    color: #4f46e5 !important;
-}
 </style>
 """
 
@@ -48,6 +25,7 @@ def vista_lista_estudiantes(db):
         if st.button("logout", key="logout_prof"):
             st.session_state.modo = None
             st.session_state.prof_vista = "lista"
+            st.query_params.clear()
             st.rerun()
 
     st.markdown("<div class='section-title'>Students</div>", unsafe_allow_html=True)
@@ -61,12 +39,20 @@ def vista_lista_estudiantes(db):
         busqueda = st.text_input("", placeholder="🔍  Search student...", label_visibility="collapsed")
         filtrados = [n for n in nombres if busqueda.lower() in n.lower()] if busqueda else nombres
 
+        rows_html = "".join([
+            f'<a href="?modo=professor&open_student={n}" target="_self" style="'
+            'display:block;padding:6px 10px;font-size:0.82rem;color:#374151;'
+            'text-decoration:none;border-bottom:1px solid #f0f0f5;"'
+            f'onmouseover="this.style.background=\'#f3f4ff\';this.style.color=\'#4f46e5\'"'
+            f'onmouseout="this.style.background=\'\';this.style.color=\'#374151\'">{n}</a>'
+            for n in filtrados
+        ])
+
         with st.expander(f"All students ({len(filtrados)})"):
-            for nombre in filtrados:
-                if st.button(nombre, key=f"est_{nombre}", use_container_width=True):
-                    st.session_state.estudiante_seleccionado = nombre
-                    st.session_state.prof_vista = "detalle"
-                    st.rerun()
+            st.markdown(
+                f'<div style="margin:-8px -16px;overflow:hidden;">{rows_html}</div>',
+                unsafe_allow_html=True
+            )
 
     st.markdown("<div style='margin-top:1rem'></div>", unsafe_allow_html=True)
     if st.button("📊 Course Stats", use_container_width=True):
@@ -78,7 +64,6 @@ def vista_lista_estudiantes(db):
 def vista_agregar_estudiante(db):
     _back("back_agregar")
     st.markdown("<div class='section-title'>New Student</div>", unsafe_allow_html=True)
-
     with st.form("form_estudiante"):
         student_id = st.text_input("Student ID", placeholder="e.g. john_doe")
         if st.form_submit_button("Create", use_container_width=True, type="primary"):
@@ -116,10 +101,8 @@ def vista_estadisticas(db, client):
     c1, c2 = st.columns(2)
     c1.metric("Active Students", len(activos))
     c2.metric("Questions Asked", total_q)
-
     if activos:
         st.caption("Active: " + ", ".join(activos))
-
     st.divider()
 
     if st.button("🤖 Generate Weekly Report", use_container_width=True):
@@ -127,28 +110,16 @@ def vista_estadisticas(db, client):
             st.warning("No activity this week.")
         else:
             with st.spinner("Analyzing..."):
-                texto  = "\n".join([f"- {m['content']}" for m in preguntas])
+                texto = "\n".join([f"- {m['content']}" for m in preguntas])
                 prompt = f"""You are an assistant for a Calculus 1 professor.
-Analyze these student questions from the past week:
-
-{texto}
-
+Analyze these student questions from the past week:\n{texto}\n
 Generate a very short weekly instructor report in English.
-Start directly with **Activity**. No title, no intro, no filler. Max 70 words.
-
+Start directly with **Activity**. No title, no intro. Max 70 words.
 ## Weekly Summary
-**Activity**
-- Active students: X
-- Questions: X
-
-**Topics**
-- Topic 1
-
-**Doubts**
-- Doubt 1
-
-**Recommendation**
-- Recommendation 1"""
+**Activity**\n- Active students: X\n- Questions: X
+**Topics**\n- Topic 1
+**Doubts**\n- Doubt 1
+**Recommendation**\n- Recommendation 1"""
                 resp = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
                 st.markdown(resp.text)
 
@@ -172,43 +143,24 @@ def vista_detalle_estudiante(db, student_id, client):
     c1.metric("Messages",  len(mensajes))
     c2.metric("Questions", len(preguntas))
     c3.metric("Last Active", ultima[:10] if ultima != "N/A" else "—")
-
     st.divider()
 
     tab1, tab2 = st.tabs(["💬 Chat", "🤖 Analysis"])
-
     with tab1:
         for msg in mensajes:
             with st.chat_message(msg["role"]):
                 st.write(msg["content"])
-
     with tab2:
         if st.button("Generate Analysis", use_container_width=True):
             with st.spinner("Analyzing..."):
                 historial = "\n".join([f"{m['role'].upper()}: {m['content']}" for m in mensajes])
                 prompt = f"""You are an assistant helping a Calculus I professor review a student's chat history.
-Analyze the following student chat:
-
-{historial}
-
-Instructions:
-- Always respond in English only.
-- Be concise. Start directly with the analysis. No introduction.
-
-Use exactly this structure:
-
-1. Main topics consulted
-- 2 to 4 bullet points
-
-2. Recurrent doubts or confusions
-- 2 to 4 bullet points
-
-3. Topics with most difficulty
-- 1 to 3 bullet points
-
-4. Brief observation about learning pattern
-- 2 to 4 bullet points
-
-Keep it compact. Short bullets, no paragraphs."""
+Analyze:\n{historial}\n
+- English only. Start directly. No intro.
+1. Main topics consulted (2-4 bullets)
+2. Recurrent doubts (2-4 bullets)
+3. Most difficult topics (1-3 bullets)
+4. Learning pattern observation (2-4 bullets)
+Short bullets only."""
                 resp = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
                 st.markdown(resp.text)
