@@ -1,7 +1,7 @@
 import streamlit as st
 from utils.firebase_utils import init_firebase
 from utils.gemini_utils import init_gemini
-from guest.guest import modo_guest
+from guest import modo_guest
 from professor.professor import modo_profesor
 from student.student import modo_student
 
