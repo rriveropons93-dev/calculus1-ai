@@ -42,11 +42,15 @@ def modo_student(client, db):
     if "mensajes" not in st.session_state:
         doc = db.collection("chats").document(student_id).get()
         st.session_state.mensajes = doc.to_dict().get("mensajes", []) if doc.exists else []
+    
+    anchor = st.empty()
 
     for msg in st.session_state.mensajes:
         with st.chat_message(msg["role"]):
             st.write(msg["content"])
 
+    anchor.markdown('<div id="bottom"></div>', unsafe_allow_html=True)
+    
     # ── Chat input ────────────────────────────────────────────────────────────
     if pregunta := st.chat_input("What do you want to study?"):
         st.session_state.mensajes.append({"role": "user", "content": pregunta})
@@ -70,10 +74,4 @@ def modo_student(client, db):
             "ultima_actualizacion": datetime.now().isoformat()
         })
 
-        components.html("""
-        <script>
-            window.parent.document.querySelectorAll('[data-testid="stChatMessage"]')
-                [window.parent.document.querySelectorAll('[data-testid="stChatMessage"]').length - 2]
-                ?.scrollIntoView({behavior: 'smooth', block: 'start'});
-        </script>
-        """, height=0)
+    st.rerun()
