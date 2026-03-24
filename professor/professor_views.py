@@ -71,11 +71,11 @@ def vista_lista_estudiantes(db):
                         st.rerun()
         else:
             with st.expander(f"Show all ({len(nombres)})"):
-                for nombre in nombres:
-                    if st.button(f"  {nombre}", key=f"all_{nombre}", use_container_width=True):
-                        st.session_state.estudiante_seleccionado = nombre
-                        st.session_state.prof_vista = "detalle"
-                        st.rerun()
+                elegido = st.radio("", nombres, label_visibility="collapsed", key="radio_students")
+                if st.button("Open →", key="open_student", type="primary"):
+                    st.session_state.estudiante_seleccionado = elegido
+                    st.session_state.prof_vista = "detalle"
+                    st.rerun()
  
     st.markdown("<div style='margin-top:1.2rem'></div>", unsafe_allow_html=True)
     c1, c2 = st.columns(2)
