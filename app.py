@@ -60,8 +60,9 @@ if st.session_state.modo is None:
             "**🎓 Student** — Log in and chat. History saved.  \n"
         )
  
-    usuario  = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    with st.form("login_form"):
+        usuario  = st.text_input("Username")
+        password = st.text_input("Password", type="password")
  
     col1, col2 = st.columns(2)
     login    = col1.button("Login",             use_container_width=True, type="primary")
