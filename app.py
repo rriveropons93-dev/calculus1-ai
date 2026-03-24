@@ -3,7 +3,31 @@ from utils.firebase_utils import init_firebase
 from utils.gemini_utils import init_gemini
 from guest import modo_guest
 from professor.professor import modo_profesor
-from student.student import modo_student
+from student.student import modo_studentst.markdown("""
+<style>
+.login-card {
+    max-width: 400px;
+    margin: 80px auto;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    background: white;
+}
+.login-title {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+.login-subtitle {
+    text-align: center;
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 30px;
+}
+</style>
+""", unsafe_allow_html=True)
+
 
 db = init_firebase()
 client = init_gemini()
