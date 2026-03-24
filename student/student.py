@@ -1,4 +1,5 @@
 import streamlit as st
+import streamlit.components.v1 as components
 from utils.pdf_utils import cargar_pdfs
 from utils.prompt import get_prompt
 from datetime import datetime
@@ -15,17 +16,8 @@ def modo_student(client, db):
         padding-top: 1.5rem !important;
         padding-bottom: 1rem !important;
     }
-    .student-header {
-        display: flex; align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.2rem;
-    }
-    .student-title {
-        font-size: 1rem; font-weight: 600; color: #1a1a2e;
-    }
-    .student-sub {
-        font-size: 0.72rem; color: #9ca3af; margin-bottom: 1rem;
-    }
+    .student-title { font-size: 1rem; font-weight: 600; color: #1a1a2e; }
+    .student-sub   { font-size: 0.72rem; color: #9ca3af; margin-bottom: 1rem; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -35,8 +27,8 @@ def modo_student(client, db):
     # ── Header ────────────────────────────────────────────────────────────────
     col_title, col_back = st.columns([6, 1])
     with col_title:
-        st.markdown(f"<div class='student-title'>📚 Calculus 1 AI</div>", unsafe_allow_html=True)
-        info = db.collection("usuarios").document(student_id).get().to_dict()
+        st.markdown("<div class='student-title'>📚 Calculus 1 AI</div>", unsafe_allow_html=True)
+        info   = db.collection("usuarios").document(student_id).get().to_dict()
         nombre = info.get("first_name", student_id) if info else student_id
         st.markdown(f"<div class='student-sub'>Welcome, {nombre}</div>", unsafe_allow_html=True)
     with col_back:
@@ -44,19 +36,7 @@ def modo_student(client, db):
             st.session_state.modo = None
             st.session_state.student_id = None
             st.session_state.mensajes = []
-            st.session_state.mensajes.append({"role": "assistant", "content": response.text})
-
-        db.collection("chats").document(student_id).set({
-            "mensajes": st.session_state.mensajes,
-            "ultima_actualizacion": datetime.now().isoformat()
-        })
-
-        st.components.v1.html("""
-        <script>
-            window.parent.document.querySelector('[data-testid="stChatMessageContent"]')
-                ?.scrollIntoView({behavior: 'smooth', block: 'start'});
-        </script>
-        """, height=0)
+            st.rerun()
 
     # ── Load chat history ─────────────────────────────────────────────────────
     if "mensajes" not in st.session_state:
@@ -89,4 +69,11 @@ def modo_student(client, db):
             "mensajes": st.session_state.mensajes,
             "ultima_actualizacion": datetime.now().isoformat()
         })
-        st.rerun()
+
+        components.html("""
+        <script>
+            window.parent.document.querySelectorAll('[data-testid="stChatMessage"]')
+                [window.parent.document.querySelectorAll('[data-testid="stChatMessage"]').length - 2]
+                ?.scrollIntoView({behavior: 'smooth', block: 'start'});
+        </script>
+        """, height=0)
