@@ -75,7 +75,7 @@ st.session_state.setdefault("student_id", None)
 if st.session_state.modo is None:
  
     st.markdown("<div class='app-title'>🎓 Calculus 1 AI Assistant</div>", unsafe_allow_html=True)
-    st.markdown("<div class='app-subtitle'>Developed by Roger Riveropons</div>", unsafe_allow_html=True)
+    st.markdown("<div class='app-subtitle'>Developed by Roger Rivero</div>", unsafe_allow_html=True)
  
     with st.expander("ℹ️ Help & Features"):
         st.markdown(
